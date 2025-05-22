@@ -1,0 +1,39 @@
+services:
+  jellyfin:
+    image: jellyfin/jellyfin
+    container_name: jelly-pfin
+    #user: uid:gid # User this later once you know what you're doing. IF you think you need it
+    volumes:
+      - ./config:/config # Jellyfin config, metadata, settings
+      - ./cache:/cache # Transcode cache, thumbnails, etc.
+      - C:\Media:/media:ro # Your media library (movies, TV, music)
+    restart: "unless-stopped"
+    ports:
+      - "8096:8096" # HTTP (you can proxy or firewall this)
+      - "8920:8920" # HTTPS (Jellyfin will auto-generate a cert; useful for LAN)
+      # Optional - alternative address used for autodiscovery
+    environment:
+      - TZ=Australia/Melbourne
+      - JELLYFIN_PublishedServerUrl=https://pfin.me
+      - JELLYFIN_PublishedServerScheme=https
+      - JELLYFIN_PublishedServerPort=443
+    # Optional - may be necessary for docker healthcheck to pass if running in host network mode
+    networks:
+      - web
+
+  nginx:
+    image: nginx:stable
+    container_name: nginx-proxy
+    restart: unless-stopped
+    ports:
+      - "1080:80"
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+    depends_on:
+      - jellyfin
+    networks:
+      - web
+
+networks:
+  web:
+    driver: bridge
