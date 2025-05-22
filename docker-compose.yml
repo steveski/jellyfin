@@ -9,8 +9,8 @@ services:
       - C:\Media:/media:ro # Your media library (movies, TV, music)
     restart: "unless-stopped"
     ports:
-      - "8096:8096" # HTTP (you can proxy or firewall this)
-      - "8920:8920" # HTTPS (Jellyfin will auto-generate a cert; useful for LAN)
+      #- "8096:8096" # HTTP (you can proxy or firewall this)
+      #- "8920:8920" # HTTPS (Jellyfin will auto-generate a cert; useful for LAN)
       # Optional - alternative address used for autodiscovery
     environment:
       - TZ=Australia/Melbourne
